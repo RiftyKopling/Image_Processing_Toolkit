@@ -9,8 +9,8 @@ Pastikan perangkat sudah memiliki:
 
 - Python 3.10 atau lebih baru.
 - pip (Python Package Installer).
-- Visual Studio Code (opsional).
 - Browser seperti Google Chrome atau Microsoft Edge.
+- Koneksi internet untuk instalasi library.
 
 ## 2. Struktur Proyek
 
@@ -42,43 +42,27 @@ Image_Processing_Toolkit/
     └── rotation.py
 ```
 
-## 3. Membuka Direktori Proyek
+## 3. Clone Repository
 
-Buka terminal VS Code, kemudian arahkan ke direktori proyek:
+Buka terminal, kemudian jalankan perintah berikut:
 
-```powershell
-cd "D:\Kuliah Semester 5\PengolahanCitra\Image_Processing_Toolkit"
+```bash
+git clone <URL_REPOSITORY>
 ```
 
-## 4. Membuat Virtual Environment
+Masuk ke direktori proyek:
 
-Virtual environment digunakan untuk memisahkan library proyek dari instalasi Python global.
-
-Buat virtual environment dengan perintah:
-
-```powershell
-python -m venv .venv
+```bash
+cd Image_Processing_Toolkit
 ```
 
-Aktifkan virtual environment:
+Ganti `<URL_REPOSITORY>` dengan URL repository GitHub yang digunakan.
 
-```powershell
-.\.venv\Scripts\Activate.ps1
-```
+Jika proyek sudah diunduh sebelumnya, cukup buka terminal pada direktori proyek.
 
-Jika berhasil, terminal akan menampilkan awalan `(.venv)`.
+## 4. Konfigurasi Requirements
 
-Contoh:
-
-```text
-(.venv) PS D:\Kuliah Semester 5\PengolahanCitra\Image_Processing_Toolkit>
-```
-
-Jika virtual environment sudah tersedia, tidak perlu membuatnya kembali. Cukup aktifkan.
-
-## 5. Konfigurasi Requirements
-
-Buat atau buka file `requirements.txt`, kemudian masukkan library berikut:
+Buka file `requirements.txt`, kemudian pastikan berisi library berikut:
 
 ```text
 streamlit
@@ -96,40 +80,48 @@ Keterangan:
 | NumPy | Operasi array dan matriks |
 | Matplotlib | Membuat visualisasi histogram |
 
-## 6. Instalasi Library
+## 5. Instalasi Library
+
+Pastikan Python dan pip sudah terpasang.
 
 Perbarui pip terlebih dahulu:
 
-```powershell
+```bash
 python -m pip install --upgrade pip
 ```
 
-Kemudian instal seluruh library dari `requirements.txt`:
+Kemudian instal seluruh library:
 
-```powershell
+```bash
 python -m pip install -r requirements.txt
 ```
 
 Tunggu sampai proses instalasi selesai.
 
-## 7. Verifikasi Instalasi
+**Catatan:** Pada beberapa sistem, perintah `python` dapat diganti dengan `python3`.
+
+## 6. Verifikasi Instalasi
 
 Pastikan seluruh library berhasil terpasang dengan menjalankan:
 
-```powershell
-python -c "import streamlit, cv2, numpy, matplotlib; print('Streamlit:', streamlit.__version__); print('OpenCV:', cv2.__version__); print('NumPy:', numpy.__version__); print('Matplotlib:', matplotlib.__version__)"
+```bash
+python -c "import streamlit, cv2, numpy, matplotlib; print('Semua library berhasil diimpor')"
 ```
 
-Jika berhasil, terminal akan menampilkan versi masing-masing library tanpa pesan error.
+Jika berhasil, terminal akan menampilkan:
 
-## 8. Menjalankan Aplikasi
+```text
+Semua library berhasil diimpor
+```
 
-Pastikan virtual environment sudah aktif dan terminal berada di direktori utama proyek.
+## 7. Menjalankan Aplikasi
+
+Pastikan terminal berada di direktori utama proyek.
 
 Jalankan aplikasi menggunakan perintah:
 
-```powershell
-streamlit run app.py
+```bash
+python -m streamlit run app.py
 ```
 
 Setelah berhasil, Streamlit akan menampilkan alamat aplikasi:
@@ -144,7 +136,7 @@ http://localhost:8501
 
 Aplikasi pengolahan citra siap digunakan.
 
-## 9. Menggunakan Aplikasi
+## 8. Menggunakan Aplikasi
 
 Langkah penggunaan aplikasi:
 
@@ -155,7 +147,7 @@ Langkah penggunaan aplikasi:
 5. Perhatikan histogram untuk melihat distribusi intensitas piksel.
 6. Klik tombol **Simpan Hasil** untuk mengunduh hasil pengolahan dalam format PNG.
 
-## 10. Menghentikan Aplikasi
+## 9. Menghentikan Aplikasi
 
 Untuk menghentikan aplikasi, kembali ke terminal dan tekan:
 
@@ -165,13 +157,13 @@ Ctrl + C
 
 Untuk menjalankan aplikasi kembali, gunakan:
 
-```powershell
-streamlit run app.py
+```bash
+python -m streamlit run app.py
 ```
 
 Tidak perlu menginstal ulang library setiap kali aplikasi dijalankan.
 
-## 11. Daftar Fitur
+## 10. Daftar Fitur
 
 Aplikasi menyediakan 15 fitur pengolahan citra:
 
@@ -193,7 +185,7 @@ Aplikasi menyediakan 15 fitur pengolahan citra:
 | 14 | Mirroring | Membalik citra secara horizontal atau vertikal |
 | 15 | Rotation | Memutar citra berdasarkan sudut tertentu |
 
-## 12. Teknologi yang Digunakan
+## 11. Teknologi yang Digunakan
 
 - Python
 - Streamlit
