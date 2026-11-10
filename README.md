@@ -20,6 +20,9 @@ Pastikan struktur folder proyek seperti berikut:
 Image_Processing_Toolkit/
 │
 ├── app.py
+├── home.py
+├── realtime.py
+├── galery.py
 ├── utils.py
 ├── requirements.txt
 │
