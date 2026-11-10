@@ -1,29 +1,30 @@
-# PRD — Aplikasi Pengolahan Citra (Versi Sederhana, Berbasis OpenCV)
 
-## 1. Ringkasan
+# Image Processing Toolkit
 
-Aplikasi Streamlit sederhana berisi 15 fitur pengolahan citra. User upload gambar, pilih fitur, atur parameter, lalu melihat **citra asli vs hasil** dan **histogram** keduanya, serta bisa **menyimpan hasil** lewat tombol save. Setiap fitur ada di **satu file Python sendiri**.
+Aplikasi pengolahan citra digital berbasis Python, Streamlit, dan OpenCV. Aplikasi menyediakan 15 fitur pengolahan citra dengan antarmuka sederhana, dilengkapi visualisasi citra asli, citra hasil, histogram, dan fitur download hasil dalam format PNG.
 
-**Prinsip utama: kode harus simple, pendek, mudah dibaca, dan seluruh algoritma memakai library OpenCV (`cv2`).**
+## 1. Persyaratan Sistem
 
-## 2. Aturan Kode
+Pastikan perangkat sudah memiliki:
 
-- Semua algoritma pengolahan citra memakai fungsi **OpenCV** (`cv2.threshold`, `cv2.GaussianBlur`, `cv2.Canny`, `cv2.filter2D`, `cv2.flip`, dst.). Tidak boleh menulis algoritma manual dengan loop piksel.
-- NumPy hanya untuk hal dasar (membuat array kernel, indexing sederhana). Tanpa Pillow/scikit-image.
-- Tanpa class, decorator, type hints, atau pola desain rumit.
-- Satu file fitur maksimal ±30 baris. `app.py` maksimal ±70 baris.
-- Satu fungsi per fitur: `run(image)`. Slider/pilihan ditaruh di dalam fungsi itu lewat `st.sidebar`.
-- Komentar singkat Bahasa Indonesia di bagian penting saja.
-- Helper hanya 1 file: `utils.py` (histogram dan konversi untuk tombol save).
+- Python 3.10 atau lebih baru.
+- pip (Python Package Installer).
+- Visual Studio Code (opsional).
+- Browser seperti Google Chrome atau Microsoft Edge.
 
-## 3. Struktur Proyek
+## 2. Struktur Proyek
 
-```
-pengolahan_citra/
+Pastikan struktur folder proyek seperti berikut:
+
+```text
+Image_Processing_Toolkit/
+│
 ├── app.py
-├── utils.py                 # tampil_histogram(image), ke_png_bytes(image)
-├── requirements.txt         # streamlit, opencv-python-headless, numpy, matplotlib
+├── utils.py
+├── requirements.txt
+│
 └── fitur/
+    ├── __init__.py
     ├── grayscale.py
     ├── brightness.py
     ├── contrast.py
@@ -41,72 +42,171 @@ pengolahan_citra/
     └── rotation.py
 ```
 
-## 4. Kontrak Setiap File Fitur
+## 3. Membuka Direktori Proyek
 
-```python
-import streamlit as st
-import cv2
+Buka terminal VS Code, kemudian arahkan ke direktori proyek:
 
-def run(image):
-    # image: array RGB uint8
-    # tampilkan slider/pilihan di sidebar dengan st.sidebar
-    # kembalikan citra hasil (uint8)
-    return hasil
+```powershell
+cd "D:\Kuliah Semester 5\PengolahanCitra\Image_Processing_Toolkit"
 ```
 
-`app.py` memanggil `hasil = fitur.run(image)` lalu menampilkan hasil, histogram, dan tombol save.
+## 4. Membuat Virtual Environment
 
-## 5. Daftar Fitur dan Algoritma (OpenCV)
+Virtual environment digunakan untuk memisahkan library proyek dari instalasi Python global.
 
-| # | Fitur | Kontrol di sidebar | Fungsi OpenCV |
-|---|-------|--------------------|---------------|
-| 1 | Grayscale | — | `cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)` |
-| 2 | Brightness | slider −100..100 | `cv2.convertScaleAbs(img, alpha=1, beta=nilai)` |
-| 3 | Contrast | slider 0.1..3.0 | `cv2.convertScaleAbs(img, alpha=nilai, beta=0)` |
-| 4 | Negative | — | `cv2.bitwise_not(img)` |
-| 5 | Thresholding | slider T 0..255 | gray lalu `cv2.threshold(gray, T, 255, cv2.THRESH_BINARY)` |
-| 6 | Thresholding Double | slider T1 dan T2 (T1 < T2) | gray lalu `cv2.inRange(gray, T1, T2)` |
-| 7 | Noise | pilihan Gaussian / Salt & Pepper, slider intensitas | Gaussian: `cv2.randn` + `cv2.add`. Salt & Pepper: `cv2.randu` untuk membuat mask acak, piksel mask diset 0 atau 255 |
-| 8 | Smoothing | pilihan Mean / Gaussian / Median, kernel 3/5/7 | `cv2.blur`, `cv2.GaussianBlur`, `cv2.medianBlur` |
-| 9 | Sharpening | — | `cv2.filter2D` dengan kernel sharpen `[[0,-1,0],[-1,5,-1],[0,-1,0]]` |
-| 10 | Edge Detection | pilihan Sobel / Prewitt / Roberts / Laplacian / Canny | lihat tabel 5a |
-| 11 | Emboss | — | `cv2.filter2D` dengan kernel emboss `[[-2,-1,0],[-1,1,1],[0,1,2]]`, lalu tambah offset 128 dengan `cv2.add` |
-| 12 | Convolution | pilihan preset kernel (Identity, Box Blur, Sharpen, Edge) | `cv2.filter2D` |
-| 13 | Equalization | — | gray: `cv2.equalizeHist`. Berwarna: `cv2.cvtColor` ke YCrCb, `cv2.split`, equalize kanal Y, `cv2.merge`, kembali ke RGB |
-| 14 | Mirroring | pilihan Horizontal / Vertical / Keduanya | `cv2.flip(img, 1 / 0 / -1)` |
-| 15 | Rotation | slider sudut −180..180 | `cv2.getRotationMatrix2D` + `cv2.warpAffine` |
+Buat virtual environment dengan perintah:
 
-### 5a. Detail Edge Detection (semua dengan OpenCV)
+```powershell
+python -m venv .venv
+```
 
-Citra diubah ke grayscale dulu. Untuk metode berbasis gradien: hitung gradien arah x dan y dengan tipe `cv2.CV_16S`, ubah ke 8-bit dengan `cv2.convertScaleAbs`, lalu gabungkan dengan `cv2.addWeighted(gx, 0.5, gy, 0.5, 0)`.
+Aktifkan virtual environment:
 
-| Metode | Cara dengan OpenCV |
-|--------|--------------------|
-| Sobel | `cv2.Sobel(gray, cv2.CV_16S, 1, 0)` dan `cv2.Sobel(gray, cv2.CV_16S, 0, 1)` |
-| Prewitt | `cv2.filter2D(gray, cv2.CV_16S, kx)` dan `ky` dengan kernel: `kx = [[-1,0,1],[-1,0,1],[-1,0,1]]`, `ky = [[-1,-1,-1],[0,0,0],[1,1,1]]` |
-| Roberts | `cv2.filter2D(gray, cv2.CV_16S, kx)` dan `ky` dengan kernel 2×2: `kx = [[1,0],[0,-1]]`, `ky = [[0,1],[-1,0]]` |
-| Laplacian | `cv2.Laplacian(gray, cv2.CV_16S)` lalu `cv2.convertScaleAbs` |
-| Canny | `cv2.Canny(gray, low, high)` dengan dua slider threshold |
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
 
-## 6. Tampilan (app.py)
+Jika berhasil, terminal akan menampilkan awalan `(.venv)`.
 
-- Sidebar: upload gambar (jpg/png) dan pilih fitur (`selectbox`). Gambar dibaca dengan `cv2.imdecode` dari bytes upload, lalu `cv2.cvtColor` BGR → RGB.
-- Halaman utama: dua kolom.
-  - Kiri: "Citra Asli", gambar, histogram.
-  - Kanan: "Citra Hasil", gambar, histogram, dan tombol **Simpan Hasil**.
-- Histogram dihitung dengan `cv2.calcHist` dan digambar dengan matplotlib: citra gray satu garis; citra berwarna tiga garis R, G, B.
-- **Tombol save:** `st.download_button("Simpan Hasil", data, file_name="hasil_<nama_fitur>.png", mime="image/png")`. Data PNG dibuat dengan `cv2.imencode(".png", ...)`; citra berwarna dikonversi RGB → BGR dulu sebelum di-encode.
-- Belum upload gambar → tampilkan `st.info("Silakan upload gambar")`.
+Contoh:
 
-## 7. Kriteria Penerimaan
+```text
+(.venv) PS D:\Kuliah Semester 5\PengolahanCitra\Image_Processing_Toolkit>
+```
 
-- [ ] 15 fitur muncul di pilihan dan berjalan tanpa error.
-- [ ] Edge detection menyediakan Sobel, Prewitt, Roberts, Laplacian, dan Canny.
-- [ ] Setiap fitur menampilkan citra asli, citra hasil, dan kedua histogram.
-- [ ] Tombol Simpan Hasil mengunduh PNG yang sama dengan preview hasil (warna tidak tertukar).
-- [ ] Semua algoritma memakai fungsi OpenCV, tanpa loop piksel manual.
-- [ ] Setiap fitur ada di file terpisah dengan satu fungsi `run(image)`.
-- [ ] Hasil 1 kanal (threshold, edge, grayscale) tampil dan tersimpan dengan benar.
-- [ ] `pip install -r requirements.txt` lalu `streamlit run app.py` langsung jalan.
+Jika virtual environment sudah tersedia, tidak perlu membuatnya kembali. Cukup aktifkan.
 
----
+## 5. Konfigurasi Requirements
+
+Buat atau buka file `requirements.txt`, kemudian masukkan library berikut:
+
+```text
+streamlit
+opencv-python-headless
+numpy
+matplotlib
+```
+
+Keterangan:
+
+| Library | Fungsi |
+|---|---|
+| Streamlit | Membuat antarmuka aplikasi web |
+| OpenCV | Melakukan pemrosesan citra digital |
+| NumPy | Operasi array dan matriks |
+| Matplotlib | Membuat visualisasi histogram |
+
+## 6. Instalasi Library
+
+Perbarui pip terlebih dahulu:
+
+```powershell
+python -m pip install --upgrade pip
+```
+
+Kemudian instal seluruh library dari `requirements.txt`:
+
+```powershell
+python -m pip install -r requirements.txt
+```
+
+Tunggu sampai proses instalasi selesai.
+
+## 7. Verifikasi Instalasi
+
+Pastikan seluruh library berhasil terpasang dengan menjalankan:
+
+```powershell
+python -c "import streamlit, cv2, numpy, matplotlib; print('Streamlit:', streamlit.__version__); print('OpenCV:', cv2.__version__); print('NumPy:', numpy.__version__); print('Matplotlib:', matplotlib.__version__)"
+```
+
+Jika berhasil, terminal akan menampilkan versi masing-masing library tanpa pesan error.
+
+## 8. Menjalankan Aplikasi
+
+Pastikan virtual environment sudah aktif dan terminal berada di direktori utama proyek.
+
+Jalankan aplikasi menggunakan perintah:
+
+```powershell
+streamlit run app.py
+```
+
+Setelah berhasil, Streamlit akan menampilkan alamat aplikasi:
+
+```text
+Local URL: http://localhost:8501
+```
+
+Buka alamat tersebut melalui browser:
+
+http://localhost:8501
+
+Aplikasi pengolahan citra siap digunakan.
+
+## 9. Menggunakan Aplikasi
+
+Langkah penggunaan aplikasi:
+
+1. Upload gambar dengan format JPG atau PNG.
+2. Pilih salah satu dari 15 fitur pengolahan citra melalui sidebar.
+3. Atur parameter pengolahan jika fitur menyediakan slider atau pilihan.
+4. Amati perbandingan citra asli dan citra hasil.
+5. Perhatikan histogram untuk melihat distribusi intensitas piksel.
+6. Klik tombol **Simpan Hasil** untuk mengunduh hasil pengolahan dalam format PNG.
+
+## 10. Menghentikan Aplikasi
+
+Untuk menghentikan aplikasi, kembali ke terminal dan tekan:
+
+```text
+Ctrl + C
+```
+
+Untuk menjalankan aplikasi kembali, gunakan:
+
+```powershell
+streamlit run app.py
+```
+
+Tidak perlu menginstal ulang library setiap kali aplikasi dijalankan.
+
+## 11. Daftar Fitur
+
+Aplikasi menyediakan 15 fitur pengolahan citra:
+
+| No. | Fitur | Fungsi |
+|---|---|---|
+| 1 | Grayscale | Mengubah citra berwarna menjadi keabuan |
+| 2 | Brightness | Mengatur tingkat kecerahan citra |
+| 3 | Contrast | Mengatur tingkat kontras citra |
+| 4 | Negative | Membalik nilai intensitas piksel |
+| 5 | Thresholding | Mengubah citra menjadi biner berdasarkan ambang batas |
+| 6 | Thresholding Double | Memisahkan intensitas berdasarkan dua ambang batas |
+| 7 | Noise | Menambahkan Gaussian Noise atau Salt & Pepper |
+| 8 | Smoothing | Mengurangi noise menggunakan Mean, Gaussian, atau Median Filter |
+| 9 | Sharpening | Mempertajam detail citra |
+| 10 | Edge Detection | Mendeteksi tepi menggunakan Sobel, Prewitt, Roberts, Laplacian, dan Canny |
+| 11 | Emboss | Memberikan efek timbul pada citra |
+| 12 | Convolution | Melakukan operasi konvolusi menggunakan kernel |
+| 13 | Equalization | Meningkatkan pemerataan distribusi intensitas histogram |
+| 14 | Mirroring | Membalik citra secara horizontal atau vertikal |
+| 15 | Rotation | Memutar citra berdasarkan sudut tertentu |
+
+## 12. Teknologi yang Digunakan
+
+- Python
+- Streamlit
+- OpenCV
+- NumPy
+- Matplotlib
+
+## Catatan
+
+- Setiap fitur memiliki file Python tersendiri di dalam folder `fitur/`.
+- Setiap fitur menggunakan satu fungsi utama bernama `run(image)`.
+- Algoritma pengolahan citra menggunakan fungsi OpenCV.
+- NumPy digunakan untuk kebutuhan array dan matriks dasar.
+- Histogram ditampilkan menggunakan Matplotlib.
+- Hasil pengolahan dapat diunduh dalam format PNG.
+- File `__pycache__` dan bytecode Python tidak perlu dimasukkan ke repository Git.
